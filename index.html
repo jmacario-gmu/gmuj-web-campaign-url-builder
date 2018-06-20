@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+<head>
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-M77FXWM');</script>
+	<!-- End Google Tag Manager -->
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width">
+
+	<title>Mason Campaign URL Builder</title>
+
+	<!--CSS-->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<style>
+		/*Utility*/
+		div.clear {clear:both; height:1px;}
+
+		/*Body*/
+		body {font-family:"Open Sans",Verdana,Geneva,sans-serif; font-size:0.9em;}
+
+		/*Links*/
+		a {color:#063;}
+		a:hover {color:#396;}
+
+		a.lowlight {color:#aaa;}
+		a.lowlight:hover {color:#666;}
+
+		/*Images*/
+		img {vertical-align:middle;}
+
+		/*Toggle containers*/ 
+		.toggleContainerTrigger {cursor:pointer;}
+		.toggleContainerTrigger::after {content:"▼"; font-size:0.9em; margin-left:0.75em; color:#063;}
+		.toggleContainer {border: 1px solid transparent;}
+
+		/*Error message*/
+		.errorMessage {color:#a00;}
+
+		/*Jquery UI tooltips*/
+		.ui-tooltip {background:#006633; border:3px solid white; padding:0.5em; color:white; border-radius:20px;}
+
+		/*Layout*/
+		div.highlight {float:left; width:25%; min-width:10em; max-width:30em; margin:1em; padding:1em; background-color:#ddd; border:3px solid #aaa; border-radius:0.5em;}
+
+		/*Tables*/
+		table {border-collapse:collapse; margin:1em 0;}
+		td, th {border: 1px solid #ddd; padding: 0.5em;}
+		th {padding-top: 0.75em; padding-bottom: 0.75em; text-align: left;}
+
+		table.input th {background-color: #006633; color: white;}
+		table.input th img.moreInfo {float:right; margin-left:2em;}
+		table.input th.required {background-color:#396;}
+		table.input th.required::after {font-size:0.8em; content:"(required)";}
+		table.input th.interface {background-color:#666;}
+
+		table#output tbody tr:nth-child(even) {background-color: #f2f2f2;}
+		table#output tbody tr:hover {background-color: #ddd;}
+
+		div#downloadControls img {vertical-align:center;}
+		a#downloadLink {display:none; font-weight:bold;}
+		a#downloadLink img {width:4em; height:4em; margin-left:2em;}
+
+		button#deleteAllRows {display:none;}
+
+  	</style>
+
+	<!--JS-->
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		//JavaScript code
+			//alert("Javascript working.");
+		//jQuery ready
+			$(document).ready(function() {
+				//jQuery code
+
+					//Test
+						//alert("jQuery working.");
+
+					//Initialize tooltip funtionality
+					    $(document).tooltip({
+					      position: {
+					        my: "left bottom-10",
+					        at: "left+10 top"
+					      }
+					    });
+
+					//For all elements having a class of toggleContainerTrigger, and not having an existing title attribute, a title attribute indicating that they control expandable sections
+						$(".toggleContainerTrigger").filter("[title=''],:not([title])").attr("title","Click to expand...")
+
+					//Toggle containers
+						//Hide any elements with a 'toggleContainer' class
+							$(".toggleContainer").hide();
+						//Attach a function to any elements with a class of 'toggleContainerTrigger', which will toggle the next following toggleContainer class element on or off when clicked.
+							$(".toggleContainerTrigger").click(function(){
+								console.log($(this).nextAll(".toggleContainer").first().html());
+								$(this).toggleClass("active").nextAll(".toggleContainer").first().slideToggle("fast");
+							});					
+
+					//Output save file funtionality
+						//Create variable to store output string
+							var outputString = "";
+						//Create variable to store output file data
+							var outputFile = null;
+						//Function to populate the output file data variable
+							function makeOutputFile(text) {
+								//Create data variable as a blob
+									var data = new Blob([text], {type: 'text/plain'});
+								// If we are replacing a previously generated file we need to manually revoke the object URL to avoid memory leaks.
+									if (outputFile !== null) {
+										window.URL.revokeObjectURL(outputFile);
+									}
+								//Create data URL 
+									outputFile = window.URL.createObjectURL(data);
+								//Return output file data URL
+									return outputFile;
+							};
+						//Create output file button functionality
+							$("#createOutputFile").on("click",function(){
+								//Create output string
+									//Clear existing output string
+										outputString="";
+									//Get output table element
+										var table = document.getElementById("output");
+									//Loop through output table rows
+										for (var i = 0, row; row = table.rows[i]; i++) {
+											//rows would be accessed using the "row" variable assigned in the for loop
+											//Debug info
+												console.log("Row: " + i);
+											//Loop through table row cells
+												for (var j = 0, col; col = row.cells[j]; j++) {
+													//columns would be accessed using the "col" variable assigned in the for loop
+													//Debug info
+														console.log("Column: " + j);
+													//Build output string
+														//Check to make sure the current cell does not specify a 'noOutput' class
+															if (!col.classList.contains("noOutput")) {
+																//If this is not the first field, prefix with a comma to take care of the delimiter between this and the previous field
+																	if (j>0) {
+																		outputString += ",";
+																	}
+																//Append cell data to output
+																	outputString += "\"" + col.innerHTML.replace(/&amp;/g, "&") + "\"";
+															}
+												}
+											//Append row delimiter
+												outputString += "\n";
+										}
+										//Output debugn info
+											console.log(outputString);
+								//Set the download link href to a data URL generated by the makeOutputFile function, then make the link visible.
+									$("#downloadLink").attr("href",makeOutputFile(outputString)).css("display","inline");
+							});
+
+					//Output table delete row buttons
+						$("table#output").on("click", ".deleteRow", function(){
+							//Confirm delete command
+								if (confirm("Are you sure you want to delete this row?")) {
+									//Remove the element
+										//$(this).parent().parent().remove();
+									//Slowly fade the element out, then remove it
+										$(this).parent().parent().hide("",function(){this.remove()});
+									//Hide download link
+										$("#downloadLink").css("display","none");
+								}
+						});
+
+					//Validate URL function
+						function fnValidateURL(textval) {
+						    var urlregex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
+						    return urlregex.test(textval);
+						}
+
+					//Example link click function
+						$(".exampleLink").on("click",function(event){
+							//Confirm function is firing
+								console.log("You clicked an example link.")
+							//Prevent default action
+								event.preventDefault();
+							//Output debug link info
+								console.log("Setting input fields as follows:\n" + "Business Unit: " + $(this).attr("data-unit") + "\n" + "Business Unit Subgroup: " + $(this).attr("data-department") + "\n" + "Protocol: " + $(this).attr("data-protocol") + "\n" + "Target URL: " + $(this).attr("data-url") + "\n" + "Medium: " + $(this).attr("data-medium") + "\n" + "Source: " + $(this).attr("data-source") + "\n" + "Campaign: " + $(this).attr("data-campaign") + "\n" + "Content: " + $(this).attr("data-content") + "\n" + "Term: " + $(this).attr("data-term"));
+							//Set field values
+								$("#unit").val($(this).attr("data-unit"));
+								$("#department").val($(this).attr("data-department"));
+								$("#protocol").val($(this).attr("data-protocol"));
+								$("#url").val($(this).attr("data-url"));
+								$("#medium").val($(this).attr("data-medium"));
+								$("#source").val($(this).attr("data-source"));
+								$("#campaign").val($(this).attr("data-campaign"));
+								$("#term").val($(this).attr("data-term"));
+								$("#content").val($(this).attr("data-content"));
+							//Call generate campaign URL function
+								fnGenerateCampaignURL();
+						});
+
+					//Medium select element change function
+						$("#url").on("change",function(){
+							//If URL field starts with http:// or https:// 
+								//Does URL starts with http://?
+									if ($(this).val().substring(0, 7)=="http://") {
+										//set protocol drop-down to http://
+											$("#protocol").val("http://");
+										//Remove substring from URL box
+											$("#url").val($(this).val().substring(7));
+									}
+								//Does URL starts with https://?
+									if ($(this).val().substring(0, 8)=="https://") {
+										//set protocol drop-down to http://
+											$("#protocol").val("https://");
+										//Remove substring from URL box
+											$("#url").val($(this).val().substring(8));
+									}
+						});
+
+					//Medium select element change function
+						$("#medium").on("change",function(){
+							//If user seleted social...
+								if ($(this).val()=="social") {
+									//source is required
+										$("#headerSource").addClass("required");
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided? On What platform?");
+								} else {
+									//source is not required
+										$("#headerSource").removeClass("required");
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided?");
+								}
+							//If user selected email...
+								if ($(this).val()=="email") {
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided? In what email?");
+								} else {
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided?");	
+								}
+							//If user selected print...
+								if ($(this).val()=="print") {
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided? In what publication/document?");
+								} else {
+									//Update source field label
+										//$("#labelSource").html("Where will this link be provided?");
+								}
+						});
+
+					//Clear form button click function
+						$("#clearForm").on("click",function(){
+							//Confirm function is firing
+								console.log("You clicked the clear form button.")
+							//Confirm clear fields command
+								if (confirm("Are you sure you want to clear all fields?")) {
+									//Clear all field values
+										$("#unit").val("");
+										$("#department").val("");
+										$("#protocol").val("");
+										$("#url").val("");
+										$("#medium").val("");
+										$("#source").val("");
+										$("#campaign").val("");
+										$("#term").val("");
+										$("#content").val("");
+								}
+						});
+
+					//Generate button click function
+						$("#generate").on("click",function(){
+							//Confirm function is firing
+								console.log("You clicked the generate button.")
+							//Call generate campaign URL function
+								fnGenerateCampaignURL();
+						});
+
+					//Delete all rows button click function
+						$("#deleteAllRows").on("click",function(){
+							//Confirm function is firing
+								console.log("You clicked the delete all rows button.")
+							//Delete all table rows
+								//Confirm delete command
+									if (confirm("Are you sure you want to delete all rows?")) {
+										//Remove the element
+											//$(this).parent().parent().remove();
+										//Slowly fade the element out, then remove it
+											$("table#output tbody tr").hide("",function(){this.remove()});
+										//Hide download link
+											$("#downloadLink").css("display","none");
+										//Hide delete all rows button
+											$("#deleteAllRows").css("display","none");
+									}
+						});
+
+					//Generate campaign URL function
+						function fnGenerateCampaignURL(){
+							//Confirm function is firing
+								console.log("Generating Campaign URL.");
+							//Save field values to variables (trim the strings and replace spaces with plus signs)
+								var unit = $("#unit").val().trim().toLowerCase().replace(/ /g, "+");
+								var department = $("#department").val().trim().toLowerCase().replace(/ /g, "+");
+								var url = $("#protocol").val() + $("#url").val().trim().toLowerCase().replace(/ /g, "+");
+								var medium = $("#medium").val().trim().toLowerCase().replace(/ /g, "+");
+								var source = $("#source").val().trim().toLowerCase().replace(/ /g, "+");
+								var campaign = $("#campaign").val().trim().toLowerCase().replace(/ /g, "+");
+								var content = $("#content").val().trim().toLowerCase().replace(/ /g, "+");
+								var term = $("#term").val().trim().toLowerCase().replace(/ /g, "+");
+							//Output debug info
+								console.log("Variables set as follows:\n" + "Mason Unit: " + unit + "\n" + "Mason Department: " + department + "\n" + "Target URL: " + url + "\n" + "Medium: " + medium + "\n" + "Source: " + source + "\n" + "Campaign: " + campaign + "\n" + "Content: " + content + "\n" + "Term: " + term);
+							//Generate URL
+								//Initialize variables
+									var source_prefix = "";
+									var tagged_url = "";
+									var error_message = "";
+								
+
+								//Do we have a valid URL?
+									if (!fnValidateURL(url)) {
+										console.log("The target URL provided is NOT a valid URL.");
+										error_message = "The target URL provided is NOT a valid URL.";	
+									}
+
+								//If user selected medium=social, then require a specific source value
+									if (medium=="social") {
+										if (source.length==0) {
+											console.log("We DO NOT have all required fields.");
+											error_message = "Missing required fields. If you are using medium=\"social\", you need to specify a source.";
+										}
+									}
+
+								//Prepare source prefix
+									//prefix with Mason unit, if it exists
+										if (unit.length>0) {
+											source_prefix = unit + "-"
+										}
+									//prefix with Mason department, if it exists
+										if (department.length>0) {
+											source_prefix += department + "-"
+										}
+								//Build complete source parameter
+									source = source_prefix + source;
+								//Trim trailing hypen from source, if necessary
+									if (source.substring(source.length-1)=="-") {
+										//Trim last character
+											source = source.slice(0, -1);
+									}
+								
+								//Do we have all other required fields?
+									if (!(medium.length>0 && source.length>0 && campaign.length>0)) {
+										console.log("We DO NOT have all required fields.");
+										error_message = "Missing required fields.";
+									}
+
+								//If we have not seen any errors...
+									if (error_message.length==0) {
+										//Output process info
+											console.log("We have all required fields.");
+										//Generate tagged URL
+											console.log("Generating URL");
+											//Begin tagged URL
+												tagged_url = url;
+											//Do we have a question mark in the URL already?
+												if (url.includes("?")) {
+													//Begin parameters with an ampersand
+														tagged_url += "&"
+												}
+												else {
+													//Begin parameters with a question mark
+														tagged_url += "?"
+												}
+											//Add medium
+												tagged_url += "utm_medium=" + medium;
+											//Add source
+												tagged_url += "&utm_source=" + source;
+											//Add campaign
+												tagged_url += "&utm_campaign=" + campaign;
+											//Add content (optional)
+												if (content.length>0) {
+													tagged_url += "&utm_content=" + content;
+												}
+											//Add term (optional)
+												if (term.length>0) {
+													tagged_url += "&utm_term=" + term;
+												}
+									}
+
+								//If we have a tagged_url result, display it
+									if (tagged_url.length>0) {
+										//Set output element value
+											$("table#output tbody").append("<tr><td>" + url + "</td><td>" + medium + "</td><td>" + source + "</td><td>" + campaign + "</td><td>" + content + "</td><td>" + term + "</td><td>" + tagged_url + "</td><td class='noOutput'><button class='deleteRow'>Delete</button></td></tr>");
+										//Hide download link
+											$("#downloadLink").css("display","none");
+										//Show 'delete all rows' button
+											$("#deleteAllRows").css("display","inline");
+									}
+
+								//If we have an error message, display it
+									if (error_message.length>0) {
+										//Set error message element value
+											$("#error").html("<p><strong>Error:</strong> " + error_message + "</p>");
+									} else {
+										//Clear output element value
+											$("#error").empty();
+									}
+						}
+
+			});
+		
+	</script>
+</head>
+
+<body>
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M77FXWM"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+
+	<h2>Mason Campaign URL Builder</h2>
+	<h3 class="toggleContainerTrigger">What is This?</h3>
+	<div class="toggleContainer">
+		<p><strong>The Mason Campaign URL Builder is a tool to help you generate campaign-tagged URLs.</strong></p>
+		<div class="highlight">
+			<p><strong>Campaign-tagging helps you track the performance of your marketing efforts:</strong></p>
+			<ul>
+				<li>postively identify visits to your website resulting from specific marketing efforts;</li>
+				<li>control how those visits are categorized in your analytics tool;</li>
+				<li>track/measure the overall performance of entire marketing campaigns, or types of media, rather than just seeing click-through rates for individual emails or links;</li>
+				<li>see what users who respond to specific marketing efforts are actually doing once they get to your website.</li>
+			</ul>
+			<p style="text-align:center;">More information about campaign-tagging:<br /><a href="/2017/04/17/campaign-tagging/" target="_blank">The what/how of campaign-tagging</a><br /><a href="/2018/01/30/campaign-tagging-strategy/" target="_blank">Campaign-tagging strategy</a></p>
+		</div>
+		<div class="highlight">
+			<p><strong>This tool helps you to:</strong></p> 
+			<ul>
+				<li>easily generate campaign-tagged URLs;</li>
+				<li>include useful information according to a consistent scheme appropriate for Mason;</li>
+				<li>coordinate all of your URLs, along with those of others across the university;</li>
+				<li>generate campaign-tagged URLs in bulk and you save the list to Excel (CSV).</li>
+			</ul>
+		</div>
+		<div class="highlight">
+			<p><strong>Examples:</strong></p>
+			<ul>
+				<li><a href="#" class="exampleLink" data-protocol="https://" data-url="www2.gmu.edu/apply-now" data-unit="admissions" data-department="ug" data-medium="email" data-source="" data-campaign="northeast" data-content="inquiry" data-term="">The Office of Admissions (undergraduate) providing a link to the 'Apply Now' page in an email to prospective students in the northeast who have requested more information.</a></li>
+				<li><a href="#" class="exampleLink" data-protocol="https://" data-url="www2.gmu.edu/around-mason?created%5Bmin%5D=&created%5Bmax%5D=&field_news_tags_tid=36" data-unit="ocm" data-department="university information" data-medium="email" data-source="" data-campaign="around-mason" data-content="" data-term="">The department of University Information within the Office of Communications and Marketing providing a link to the 'Around Mason' page in an email.</a></li>
+				<li><a href="#" class="exampleLink" data-protocol="http://" data-url="transportation.gmu.edu/BikeToMason.html" data-unit="mason" data-department="" data-medium="social" data-source="facebook" data-campaign="transportation" data-content="bike-to-mason" data-term="">A link about 'Bike to Mason Day' to be shared on the main Mason Facebook page.</a></li>
+				<li><a href="#" class="exampleLink" data-protocol="https://" data-url="www2.gmu.edu/admissions-aid/apply-now/" data-unit="chss" data-department="psychology" data-medium="social" data-source="facebook" data-campaign="apply" data-content="" data-term="">The Psychology Department posting an application link on their Facebook page.</a></li>
+			</ul>			
+		</div>
+		<div class="clear"></div>
+	</div>
+	<table class="input">
+			<tr>
+				<th class="required">What area of Mason are you with? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. Mason unit that is sharing this link? Prefix for source field (utm_source). " /></th>
+				<td><input id="unit" name="unit" type="text" placeholder="Mason unit..." /></td>
+			</tr>
+			<tr>
+				<th>What department, specifically? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Recommended, if applicable. Department or subdivision within the unit. Prefix for source field (utm_source). " /></th>
+				<td><input id="department" name="department" type="text" placeholder="Mason department..." /></td>
+			</tr>
+			<tr>
+				<th class="required">In what media do you want to provide your link? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. What is the media in which this link will be found? Medium field (utm_medium). " /></th>
+				<td>
+					<select id="medium" name="medium">
+						<option value="">-</option>
+						<option value="email">email</option>
+						<option value="social">social</option>
+						<option value="print">print</option>
+						<option value="radio">radio</option>
+						<option value="tv">tv</option>
+						<option value="cpc">cpc (advertising: cost per click)</option>
+						<option value="cpm">cpm (advertising: cost per thousand impressions)</option>
+						<option value="cpa">cpa (advertising: cost per action)</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th class="required">What URL do you want to direct people to? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. Target URL. What link do you want to share?" /></th>
+				<td>
+					<select id="protocol" name="protocol">
+						<option value="">-</option>
+						<option value="http://">http://</option>
+						<option value="https://">https://</option>
+					</select>
+					<input id="url" name="url" type="text" placeholder="url..." />
+				</td>
+			</tr>
+			<tr>
+				<th id="headerSource"><span id="labelSource">Where will this link be provided?</span> <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="What is the specific source of the link? For social media, source should be the social media service (facebook, twitter, etc.). For regular emails like newsletters, what is the email you are sending?" /></th>
+				<td><input id="source" name="source" type="text" placeholder="source..." /></td>
+			</tr>
+			<tr>
+				<th class="required">What marketing campaign is this communication part of? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. What marketing campaign or business goal does this communication support? Campaign field (utm_campaign)." /></th>
+				<td><input id="campaign" name="campaign" type="text" placeholder="campaign..." /></td>
+			</tr>
+			<tr>
+				<th>What is the content of this communication? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Optional. Used to specify additional information about the content of the communication in which the link appears. Content field (utm_content)." /></th>
+				<td><input id="content" name="content" type="text" placeholder="content..." /></td>
+			</tr>
+			<tr>
+				<th>Is there a related advertising term? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Optional. Typically used with search or display advertising to provide the search or ad term which led to the advertisement being displayed." /></th>
+				<td><input id="term" name="term" type="text" placeholder="term..." /></td>
+			</tr>
+			<tr>
+				<th class="interface">Generate <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Generate the campaign-tagged URL using the information provided and add it to the output below." /></th>
+				<td>
+					<button id="generate" name="generate">Generate</button>
+					<div id="error" class="errorMessage"></div>
+				</td>
+			</tr>
+		<tbody>
+		</tbody>
+	</table>
+
+	<button id="clearForm">Clear Form</button>
+
+	<h3>Output</h3>
+	<div id="downloadControls">
+		<p>Save output as CSV file: <button id="createOutputFile">Generate CSV file</button> <a id="downloadLink" href="#" download="campaign-tagged-URLs.csv"><img src="iconExcel_256.png" alt="Download CSV File" /></a></p>
+	</div>
+	<table id="output">
+		<thead>
+			<tr>
+				<th>Target URL</th>
+				<th>Medium</th>
+				<th>Source</th>
+				<th>Campaign</th>
+				<th>Content</th>
+				<th>Term</th>
+				<th>Tagged URL</th>
+				<th class="noOutput"><button id='deleteAllRows'>Delete All Rows</button></th>
+			</tr>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+	<p style="margin-top:10em;"><a class="lowlight" href="index20180226.html">Access the old version of the URL Builder</a></p>
+</body>
+
+</html>
