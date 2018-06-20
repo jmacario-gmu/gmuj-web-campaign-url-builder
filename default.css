@@ -1,0 +1,49 @@
+/*Utility*/
+div.clear {clear:both; height:1px;}
+
+/*Body*/
+body {font-family:"Open Sans",Verdana,Geneva,sans-serif; font-size:0.9em;}
+
+/*Links*/
+a {color:#063;}
+a:hover {color:#396;}
+
+a.lowlight {color:#aaa;}
+a.lowlight:hover {color:#666;}
+
+/*Images*/
+img {vertical-align:middle;}
+
+/*Toggle containers*/ 
+.toggleContainerTrigger {cursor:pointer;}
+.toggleContainerTrigger::after {content:"▼"; font-size:0.9em; margin-left:0.75em; color:#063;}
+.toggleContainer {border: 1px solid transparent;}
+
+/*Error message*/
+.errorMessage {color:#a00;}
+
+/*Jquery UI tooltips*/
+.ui-tooltip {background:#006633; border:3px solid white; padding:0.5em; color:white; border-radius:20px;}
+
+/*Layout*/
+div.highlight {float:left; width:25%; min-width:10em; max-width:30em; margin:1em; padding:1em; background-color:#ddd; border:3px solid #aaa; border-radius:0.5em;}
+
+/*Tables*/
+table {border-collapse:collapse; margin:1em 0;}
+td, th {border: 1px solid #ddd; padding: 0.5em;}
+th {padding-top: 0.75em; padding-bottom: 0.75em; text-align: left;}
+
+table.input th {background-color: #006633; color: white;}
+table.input th img.moreInfo {float:right; margin-left:2em;}
+table.input th.required {background-color:#396;}
+table.input th.required::after {font-size:0.8em; content:"(required)";}
+table.input th.interface {background-color:#666;}
+
+table#output tbody tr:nth-child(even) {background-color: #f2f2f2;}
+table#output tbody tr:hover {background-color: #ddd;}
+
+div#downloadControls img {vertical-align:center;}
+a#downloadLink {display:none; font-weight:bold;}
+a#downloadLink img {width:4em; height:4em; margin-left:2em;}
+
+button#deleteAllRows {display:none;}
