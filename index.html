@@ -405,15 +405,15 @@
 	</div>
 	<table class="input">
 			<tr>
-				<th class="required">What area of Mason are you with? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. Mason unit that is sharing this link? Prefix for source field (utm_source). " /></th>
+				<th class="required">What area of Mason are you with? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Required. Mason unit that is sharing this link? Prefix for source field (utm_source). " /></th>
 				<td><input id="unit" name="unit" type="text" placeholder="Mason unit..." /></td>
 			</tr>
 			<tr>
-				<th>What department, specifically? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Recommended, if applicable. Department or subdivision within the unit. Prefix for source field (utm_source). " /></th>
+				<th>What department, specifically? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Recommended, if applicable. Department or subdivision within the unit. Prefix for source field (utm_source). " /></th>
 				<td><input id="department" name="department" type="text" placeholder="Mason department..." /></td>
 			</tr>
 			<tr>
-				<th class="required">In what media do you want to provide your link? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. What is the media in which this link will be found? Medium field (utm_medium). " /></th>
+				<th class="required">In what media do you want to provide your link? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Required. What is the media in which this link will be found? Medium field (utm_medium). " /></th>
 				<td>
 					<select id="medium" name="medium">
 						<option value="">-</option>
@@ -429,7 +429,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="required">What URL do you want to direct people to? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. Target URL. What link do you want to share?" /></th>
+				<th class="required">What URL do you want to direct people to? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Required. Target URL. What link do you want to share?" /></th>
 				<td>
 					<select id="protocol" name="protocol">
 						<option value="">-</option>
@@ -440,23 +440,23 @@
 				</td>
 			</tr>
 			<tr>
-				<th id="headerSource"><span id="labelSource">Where will this link be provided?</span> <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="What is the specific source of the link? For social media, source should be the social media service (facebook, twitter, etc.). For regular emails like newsletters, what is the email you are sending?" /></th>
+				<th id="headerSource"><span id="labelSource">Where will this link be provided?</span> <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="What is the specific source of the link? For social media, source should be the social media service (facebook, twitter, etc.). For regular emails like newsletters, what is the email you are sending?" /></th>
 				<td><input id="source" name="source" type="text" placeholder="source..." /></td>
 			</tr>
 			<tr>
-				<th class="required">What marketing campaign is this communication part of? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Required. What marketing campaign or business goal does this communication support? Campaign field (utm_campaign)." /></th>
+				<th class="required">What marketing campaign is this communication part of? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Required. What marketing campaign or business goal does this communication support? Campaign field (utm_campaign)." /></th>
 				<td><input id="campaign" name="campaign" type="text" placeholder="campaign..." /></td>
 			</tr>
 			<tr>
-				<th>What is the content of this communication? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Optional. Used to specify additional information about the content of the communication in which the link appears. Content field (utm_content)." /></th>
+				<th>What is the content of this communication? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Optional. Used to specify additional information about the content of the communication in which the link appears. Content field (utm_content)." /></th>
 				<td><input id="content" name="content" type="text" placeholder="content..." /></td>
 			</tr>
 			<tr>
-				<th>Is there a related advertising term? <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Optional. Typically used with search or display advertising to provide the search or ad term which led to the advertisement being displayed." /></th>
+				<th>Is there a related advertising term? <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Optional. Typically used with search or display advertising to provide the search or ad term which led to the advertisement being displayed." /></th>
 				<td><input id="term" name="term" type="text" placeholder="term..." /></td>
 			</tr>
 			<tr>
-				<th class="interface">Generate <img class="moreInfo" alt="More information" src="ic_help_outline_white_24px.svg" title="Generate the campaign-tagged URL using the information provided and add it to the output below." /></th>
+				<th class="interface">Generate <img class="moreInfo" alt="More information" src="images/ic_help_outline_white_24px.svg" title="Generate the campaign-tagged URL using the information provided and add it to the output below." /></th>
 				<td>
 					<button id="generate" name="generate">Generate</button>
 					<div id="error" class="errorMessage"></div>
@@ -470,7 +470,7 @@
 
 	<h3>Output</h3>
 	<div id="downloadControls">
-		<p>Save output as CSV file: <button id="createOutputFile">Generate CSV file</button> <a id="downloadLink" href="#" download="campaign-tagged-URLs.csv"><img src="iconExcel_256.png" alt="Download CSV File" /></a></p>
+		<p>Save output as CSV file: <button id="createOutputFile">Generate CSV file</button> <a id="downloadLink" href="#" download="campaign-tagged-URLs.csv"><img src="images/iconExcel_256.png" alt="Download CSV File" /></a></p>
 	</div>
 	<table id="output">
 		<thead>
